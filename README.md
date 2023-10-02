@@ -225,6 +225,6 @@ const result: MyWeatherCondition = parse({
 
 # Tips
 
-- if you have multiple transform functions that you want to execute one after another use `Pipeline(fn1, fn2, fn3, ...)`
+- if you have multiple transform functions that you want to execute one after another use `Pipeline(fn1, fn2, fn3, ...)` or `ArrayPipeline(fn1, fn2, fn3, ...)`
 - if you want to automatically null your property if it matches a specified value use the `$nullables: [val1, val2, ...]` option
 - if you want to automatically null your property if another property is null use the `$nullWith: "otherProperty"` option

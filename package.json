@@ -1,6 +1,6 @@
 {
     "name": "smart-buffer-parser",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Provides an intuitive (and typesafe) way to parse buffers into any kind of data structure!",
     "main": "dist/index.js",
     "scripts": {
