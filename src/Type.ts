@@ -50,6 +50,8 @@ const Types = {
     DOUBLE_LE: new Type<number, false>(8, false, (buffer, offset) => buffer.readDoubleLE(offset)),
     FLOAT_BE: new Type<number, false>(4, false, (buffer, offset) => buffer.readFloatBE(offset)),
     FLOAT_LE: new Type<number, false>(4, false, (buffer, offset) => buffer.readFloatLE(offset)),
+    /** A single bit. The index `0` points to the left most bit.  */
+    BIT: (index: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7) => new Type<boolean, false>(1/8, false, (buffer, offset) => ((buffer.readUint8(offset) >> 7 - index) & 1) === 1),
     /** A string having the passed encoding. The passed length is the length of the whole string in bytes. */
     STRING: (byteLength: number, encoding?: BufferEncoding) => new Type<string, false>(byteLength, false, (buffer, offset) => buffer.toString(encoding, offset, offset + byteLength)),
     ARRAY: function <JSType>(type: Type<JSType, false>): Type<JSType[], true>{

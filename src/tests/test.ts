@@ -12,7 +12,9 @@ const myBuffer = Buffer.alloc(1000);
 
 
 let byteIndex = 0;
-for(let i = 0; i < 100; ++i){
+myBuffer.writeUint8(64, 0);
+byteIndex += 1;
+for(let i = 0; i < 3; ++i){
     myBuffer.write("hallo", byteIndex, "ascii");
     byteIndex += 5;
     myBuffer.writeInt32BE(i, byteIndex);
@@ -20,6 +22,7 @@ for(let i = 0; i < 100; ++i){
 }
 
 type MyType = {
+    test: boolean,
     hums: ({
         label: string,
         value: number,
@@ -28,6 +31,10 @@ type MyType = {
 
 
 const structure : ParsingStructure<MyType> = {
+    test: new SimpleParseEntry({
+        $type: Type.BIT(1),
+        $offset: 0,
+    }),
     hums: new ArrayParseEntry({
         label: new SimpleParseEntry({
             $offset: 0,
@@ -38,7 +45,7 @@ const structure : ParsingStructure<MyType> = {
             $type: Type.INT32_BE,
             $transform: Pipeline((val) => val.toFixed(), (val) => parseInt(val))
         }),
-    }, { $size: 100, $itemByteLength: 10, $offset: 0 })
+    }, { $size: 3, $itemByteLength: 10, $offset: 1 })
 }
 
 const result = parse(structure, myBuffer);

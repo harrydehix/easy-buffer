@@ -2,3 +2,4 @@ node_modules/
 src/
 screenshots/
 tsconfig.json
+dist/tests
