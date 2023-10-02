@@ -1,0 +1,25 @@
+{
+    "name": "smart-buffer-parser",
+    "version": "1.0.0",
+    "description": "Provides an intuitive (and typesafe) way to parse buffers into any kind of data structure!",
+    "main": "dist/index.js",
+    "scripts": {
+        "watch": "npx tsc --watch",
+        "build": "npx tsc",
+        "start": "node dist/index.js",
+        "test": "node dist/tests/test.js"
+    },
+    "keywords": [
+        "buffer",
+        "parser"
+    ],
+    "author": "Henri Hollmann (harrydehix)",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/lodash.flow": "^3.5.7",
+        "typescript": "^5.2.2"
+    },
+    "dependencies": {
+        "lodash.flow": "^3.5.0"
+    }
+}
