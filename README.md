@@ -6,7 +6,7 @@ The `smart-buffer-parser` package offers an intuitive (and typesafe) way to conv
 
 # Examples
 
-Let's get started quick and learn from simple examples!
+Let's get started quickly and learn from simple examples!
 
 ### Example 1: Simple nested structures
 
