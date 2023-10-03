@@ -1,6 +1,6 @@
 {
-    "name": "easy-buffer",
-    "version": "1.0.0",
+    "name": "@harrydehix/easy-buffer",
+    "version": "1.0.1",
     "description": "Provides a powerful (and typesafe) way to read from buffers!",
     "main": "dist/index.js",
     "scripts": {

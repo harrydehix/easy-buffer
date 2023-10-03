@@ -352,10 +352,10 @@ const Types = {
         type6: Type<Type6, "primitive">,
         type7: Type<Type7, "primitive">,
         gap: number = 0
-    ): Type<[Type1, Type2, Type3, Type4, Type5, Type6, Type7], "array"> {
+    ): Type<[Type1, Type2, Type3, Type4, Type5, Type6, Type7], "tuple"> {
         return new Type<
             [Type1, Type2, Type3, Type4, Type5, Type6, Type7],
-            "array"
+            "tuple"
         >(
             type1.byteLength +
                 type2.byteLength +
@@ -364,7 +364,7 @@ const Types = {
                 type5.byteLength +
                 type6.byteLength +
                 type7.byteLength,
-            "array",
+            "tuple",
             (buffer, offset) => {
                 return [
                     type1.parse(buffer, offset),

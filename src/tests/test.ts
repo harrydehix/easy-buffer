@@ -18,16 +18,24 @@ type MyType = {
     hums: {
         value: number | null;
         label: string | null;
-    }[];
+    };
 };
 
 const result: MyType = {
     hums: buffer
         .read({
-            type: Type.ARRAY(Type.TUPLE_2(Type.INT32_BE, Type.STRING(5)), 3, 1),
+            type: Type.TUPLE_7(
+                Type.INT32_BE,
+                Type.STRING(5),
+                Type.STRING(5),
+                Type.STRING(5),
+                Type.STRING(5),
+                Type.STRING(5),
+                Type.STRING(5)
+            ),
             offset: 0,
         })
-        .transformItem((item) => ({
+        .transform((item) => ({
             value: item[0] === 2 ? null : item[0],
             label: item[0] === 2 ? null : item[1],
         }))
