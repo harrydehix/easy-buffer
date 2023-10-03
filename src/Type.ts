@@ -121,7 +121,7 @@ const Types = {
     /** A single bit. The index `0` points to the left most bit.  */
     BIT: (index: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7) =>
         new Type<boolean, "primitive">(
-            1 / 8,
+            0,
             "primitive",
             (buffer, offset) =>
                 ((buffer.readUint8(offset) >> (7 - index)) & 1) === 1
