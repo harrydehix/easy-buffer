@@ -14,6 +14,8 @@ type ChangeTupleType<T, NewType> = T extends [any, any]
     ? [NewType, NewType, NewType, NewType, NewType, NewType]
     : T extends [any, any, any, any, any, any, any]
     ? [NewType, NewType, NewType, NewType, NewType, NewType, NewType]
+    : T extends [any, any, any, any, any, any, any, any]
+    ? [NewType, NewType, NewType, NewType, NewType, NewType, NewType, NewType]
     : never;
 
 type InjectNullToTuple<T> = T extends [infer Type1, infer Type2]
@@ -63,6 +65,26 @@ type InjectNullToTuple<T> = T extends [infer Type1, infer Type2]
           Type5 | null,
           Type6 | null,
           Type7 | null
+      ]
+    : T extends [
+          infer Type1,
+          infer Type2,
+          infer Type3,
+          infer Type4,
+          infer Type5,
+          infer Type6,
+          infer Type7,
+          infer Type8
+      ]
+    ? [
+          Type1 | null,
+          Type2 | null,
+          Type3 | null,
+          Type4 | null,
+          Type5 | null,
+          Type6 | null,
+          Type7 | null,
+          Type8 | null
       ]
     : never;
 
@@ -178,6 +200,53 @@ type InjectNullToTuplePartially<T, K> = T extends [infer Type1, infer Type2]
                                       ? Type7
                                       : Type7 | null
                               ]
+                            : T extends [
+                                  infer Type1,
+                                  infer Type2,
+                                  infer Type3,
+                                  infer Type4,
+                                  infer Type5,
+                                  infer Type6,
+                                  infer Type7,
+                                  infer Type8
+                              ]
+                            ? K extends [
+                                  infer ArrType1,
+                                  infer ArrType2,
+                                  infer ArrType3,
+                                  infer ArrType4,
+                                  infer ArrType5,
+                                  infer ArrType6,
+                                  infer ArrType7,
+                                  infer ArrType8
+                              ]
+                                ? [
+                                      ArrType1 extends never[]
+                                          ? Type1
+                                          : Type1 | null,
+                                      ArrType2 extends never[]
+                                          ? Type2
+                                          : Type2 | null,
+                                      ArrType3 extends never[]
+                                          ? Type3
+                                          : Type3 | null,
+                                      ArrType4 extends never[]
+                                          ? Type4
+                                          : Type4 | null,
+                                      ArrType5 extends never[]
+                                          ? Type5
+                                          : Type5 | null,
+                                      ArrType6 extends never[]
+                                          ? Type6
+                                          : Type6 | null,
+                                      ArrType7 extends never[]
+                                          ? Type7
+                                          : Type7 | null,
+                                      ArrType8 extends never[]
+                                          ? Type8
+                                          : Type8 | null
+                                  ]
+                                : never
                             : never
                         : never
                     : never
@@ -219,6 +288,17 @@ type InferTuple<T> = T extends [infer Type1, infer Type2]
           infer Type7
       ]
     ? [Type1, Type2, Type3, Type4, Type5, Type6, Type7]
+    : T extends [
+          infer Type1,
+          infer Type2,
+          infer Type3,
+          infer Type4,
+          infer Type5,
+          infer Type6,
+          infer Type7,
+          infer Type8
+      ]
+    ? [Type1, Type2, Type3, Type4, Type5, Type6, Type7, Type8]
     : never;
 
 type InjectTupleArray<T> = T extends [infer Type1, infer Type2]
@@ -254,6 +334,17 @@ type InjectTupleArray<T> = T extends [infer Type1, infer Type2]
           infer Type7
       ]
     ? [Type1[], Type2[], Type3[], Type4[], Type5[], Type6[], Type7[]]
+    : T extends [
+          infer Type1,
+          infer Type2,
+          infer Type3,
+          infer Type4,
+          infer Type5,
+          infer Type6,
+          infer Type7,
+          infer Type8
+      ]
+    ? [Type1[], Type2[], Type3[], Type4[], Type5[], Type6[], Type7[], Type8[]]
     : never;
 
 type InferTypeTypeNoTuple<T> = ElementType<T> extends never

@@ -417,6 +417,95 @@ const Types = {
             gap
         );
     },
+
+    TUPLE_8: function <Type1, Type2, Type3, Type4, Type5, Type6, Type7, Type8>(
+        type1: Type<Type1, any>,
+        type2: Type<Type2, any>,
+        type3: Type<Type3, any>,
+        type4: Type<Type4, any>,
+        type5: Type<Type5, any>,
+        type6: Type<Type6, any>,
+        type7: Type<Type7, any>,
+        type8: Type<Type8, any>,
+        gap: number = 0
+    ): Type<[Type1, Type2, Type3, Type4, Type5, Type6, Type7, Type8], "tuple"> {
+        return new Type<
+            [Type1, Type2, Type3, Type4, Type5, Type6, Type7, Type8],
+            "tuple"
+        >(
+            type1.byteLength +
+                type2.byteLength +
+                type3.byteLength +
+                type4.byteLength +
+                type5.byteLength +
+                type6.byteLength +
+                type7.byteLength +
+                type8.byteLength,
+            "tuple",
+            (buffer, offset) => {
+                return [
+                    type1.parse(buffer, offset),
+                    type2.parse(buffer, offset + type1.byteLength + gap),
+                    type3.parse(
+                        buffer,
+                        offset + type1.byteLength + type2.byteLength + 2 * gap
+                    ),
+                    type4.parse(
+                        buffer,
+                        offset +
+                            type1.byteLength +
+                            type2.byteLength +
+                            type3.byteLength +
+                            3 * gap
+                    ),
+                    type5.parse(
+                        buffer,
+                        offset +
+                            type1.byteLength +
+                            type2.byteLength +
+                            type3.byteLength +
+                            type4.byteLength +
+                            4 * gap
+                    ),
+                    type6.parse(
+                        buffer,
+                        offset +
+                            type1.byteLength +
+                            type2.byteLength +
+                            type3.byteLength +
+                            type4.byteLength +
+                            type5.byteLength +
+                            5 * gap
+                    ),
+                    type7.parse(
+                        buffer,
+                        offset +
+                            type1.byteLength +
+                            type2.byteLength +
+                            type3.byteLength +
+                            type4.byteLength +
+                            type5.byteLength +
+                            type6.byteLength +
+                            6 * gap
+                    ),
+                    type8.parse(
+                        buffer,
+                        offset +
+                            type1.byteLength +
+                            type2.byteLength +
+                            type3.byteLength +
+                            type4.byteLength +
+                            type5.byteLength +
+                            type6.byteLength +
+                            type7.byteLength +
+                            7 * gap
+                    ),
+                ];
+            },
+            8,
+            gap
+        );
+    },
 };
 
 export default Types;
