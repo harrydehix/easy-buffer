@@ -2,6 +2,20 @@ import { Type, TypeType } from "./Type";
 
 type ElementType<T> = T extends (infer E)[] ? E : never;
 
+type ChangeTupleType<T, NewType> = T extends [any, any]
+    ? [NewType, NewType]
+    : T extends [any, any, any]
+    ? [NewType, NewType, NewType]
+    : T extends [any, any, any, any]
+    ? [NewType, NewType, NewType, NewType]
+    : T extends [any, any, any, any, any]
+    ? [NewType, NewType, NewType, NewType, NewType]
+    : T extends [any, any, any, any, any, any]
+    ? [NewType, NewType, NewType, NewType, NewType, NewType]
+    : T extends [any, any, any, any, any, any, any]
+    ? [NewType, NewType, NewType, NewType, NewType, NewType, NewType]
+    : never;
+
 type InjectNullToTuple<T> = T extends [infer Type1, infer Type2]
     ? [Type1 | null, Type2 | null]
     : T extends [infer Type1, infer Type2, infer Type3]
@@ -359,6 +373,16 @@ export class TupleParseObject<Type> extends PrimitiveParseObject<
             );
         }
         return new TupleParseObject(result as any, this.easyBuffer);
+    }
+
+    public transformTupleItem<NewElementType>(
+        fn: (val: ElementType<Type>, index: number) => NewElementType
+    ): TupleParseObject<ChangeTupleType<Type, NewElementType>> {
+        const result: NewElementType[] = [];
+        for (let i = 0; i < this.value.length; ++i) {
+            result.push(fn(this.value[i] as any, i));
+        }
+        return new TupleParseObject(result as never, this.easyBuffer);
     }
 
     protected clone() {

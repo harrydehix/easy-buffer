@@ -15,30 +15,16 @@ for (let i = 0; i < 3; ++i) {
 const buffer = new EasyBuffer(myBuffer);
 
 type MyType = {
-    hums: {
-        value: number | null;
-        label: string | null;
-    };
+    hums: [number, number, number];
 };
 
 const result: MyType = {
     hums: buffer
         .read({
-            type: Type.TUPLE_7(
-                Type.INT32_BE,
-                Type.STRING(5),
-                Type.STRING(5),
-                Type.STRING(5),
-                Type.STRING(5),
-                Type.STRING(5),
-                Type.STRING(5)
-            ),
+            type: Type.TUPLE_3(Type.INT32_BE, Type.STRING(5), Type.STRING(5)),
             offset: 0,
         })
-        .transform((item) => ({
-            value: item[0] === 2 ? null : item[0],
-            label: item[0] === 2 ? null : item[1],
-        }))
+        .transformTupleItem((item, index) => 3)
         .end(),
 };
 
