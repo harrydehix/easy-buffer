@@ -159,8 +159,8 @@ const Types = {
     },
 
     TUPLE_2: function <Type1, Type2>(
-        type1: Type<Type1, "primitive">,
-        type2: Type<Type2, "primitive">,
+        type1: Type<Type1, any>,
+        type2: Type<Type2, any>,
         gap: number = 0
     ): Type<[Type1, Type2], "tuple"> {
         return new Type<[Type1, Type2], "tuple">(
@@ -178,9 +178,9 @@ const Types = {
     },
 
     TUPLE_3: function <Type1, Type2, Type3>(
-        type1: Type<Type1, "primitive">,
-        type2: Type<Type2, "primitive">,
-        type3: Type<Type3, "primitive">,
+        type1: Type<Type1, any>,
+        type2: Type<Type2, any>,
+        type3: Type<Type3, any>,
         gap: number = 0
     ): Type<[Type1, Type2, Type3], "tuple"> {
         return new Type<[Type1, Type2, Type3], "tuple">(
@@ -202,10 +202,10 @@ const Types = {
     },
 
     TUPLE_4: function <Type1, Type2, Type3, Type4>(
-        type1: Type<Type1, "primitive">,
-        type2: Type<Type2, "primitive">,
-        type3: Type<Type3, "primitive">,
-        type4: Type<Type4, "primitive">,
+        type1: Type<Type1, any>,
+        type2: Type<Type2, any>,
+        type3: Type<Type3, any>,
+        type4: Type<Type4, any>,
         gap: number = 0
     ): Type<[Type1, Type2, Type3, Type4], "tuple"> {
         return new Type<[Type1, Type2, Type3, Type4], "tuple">(
@@ -238,11 +238,11 @@ const Types = {
     },
 
     TUPLE_5: function <Type1, Type2, Type3, Type4, Type5>(
-        type1: Type<Type1, "primitive">,
-        type2: Type<Type2, "primitive">,
-        type3: Type<Type3, "primitive">,
-        type4: Type<Type4, "primitive">,
-        type5: Type<Type5, "primitive">,
+        type1: Type<Type1, any>,
+        type2: Type<Type2, any>,
+        type3: Type<Type3, any>,
+        type4: Type<Type4, any>,
+        type5: Type<Type5, any>,
         gap: number = 0
     ): Type<[Type1, Type2, Type3, Type4, Type5], "tuple"> {
         return new Type<[Type1, Type2, Type3, Type4, Type5], "tuple">(
@@ -285,12 +285,12 @@ const Types = {
     },
 
     TUPLE_6: function <Type1, Type2, Type3, Type4, Type5, Type6>(
-        type1: Type<Type1, "primitive">,
-        type2: Type<Type2, "primitive">,
-        type3: Type<Type3, "primitive">,
-        type4: Type<Type4, "primitive">,
-        type5: Type<Type5, "primitive">,
-        type6: Type<Type6, "primitive">,
+        type1: Type<Type1, any>,
+        type2: Type<Type2, any>,
+        type3: Type<Type3, any>,
+        type4: Type<Type4, any>,
+        type5: Type<Type5, any>,
+        type6: Type<Type6, any>,
         gap: number = 0
     ): Type<[Type1, Type2, Type3, Type4, Type5, Type6], "tuple"> {
         return new Type<[Type1, Type2, Type3, Type4, Type5, Type6], "tuple">(
@@ -344,13 +344,13 @@ const Types = {
     },
 
     TUPLE_7: function <Type1, Type2, Type3, Type4, Type5, Type6, Type7>(
-        type1: Type<Type1, "primitive">,
-        type2: Type<Type2, "primitive">,
-        type3: Type<Type3, "primitive">,
-        type4: Type<Type4, "primitive">,
-        type5: Type<Type5, "primitive">,
-        type6: Type<Type6, "primitive">,
-        type7: Type<Type7, "primitive">,
+        type1: Type<Type1, any>,
+        type2: Type<Type2, any>,
+        type3: Type<Type3, any>,
+        type4: Type<Type4, any>,
+        type5: Type<Type5, any>,
+        type6: Type<Type6, any>,
+        type7: Type<Type7, any>,
         gap: number = 0
     ): Type<[Type1, Type2, Type3, Type4, Type5, Type6, Type7], "tuple"> {
         return new Type<
