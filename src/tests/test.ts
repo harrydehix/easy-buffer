@@ -1,53 +1,37 @@
-import parse from "../parse";
-import ParsingStructure, { SimpleParseEntry, TransformedParseEntry, DependencyParseEntry } from "../ParsingStructure"
 import Type from "../Type";
 import { inspect } from "util";
-import { ArrayParseEntry, ArrayParseEntryOptions } from "../ArrayParseEntry";
-import { Pipeline } from "../Pipeline";
-
-
-
+import EasyBuffer from "../EasyBuffer";
 
 const myBuffer = Buffer.alloc(1000);
 
-
 let byteIndex = 0;
-myBuffer.writeUint8(64, 0);
-byteIndex += 1;
-for(let i = 0; i < 3; ++i){
-    myBuffer.write("hallo", byteIndex, "ascii");
-    byteIndex += 5;
+for (let i = 0; i < 3; ++i) {
     myBuffer.writeInt32BE(i, byteIndex);
-    byteIndex += 5;
+    byteIndex += 4;
+    myBuffer.write("hell" + i, byteIndex, "ascii");
+    byteIndex += 6;
 }
+
+const buffer = new EasyBuffer(myBuffer);
 
 type MyType = {
-    test: boolean,
-    hums: ({
-        label: string,
-        value: number,
-    })[]
-}
+    hums: {
+        value: number | null;
+        label: string | null;
+    }[];
+};
 
+const result: MyType = {
+    hums: buffer
+        .read({
+            type: Type.ARRAY(Type.TUPLE_2(Type.INT32_BE, Type.STRING(5)), 3, 1),
+            offset: 0,
+        })
+        .transformItem((item) => ({
+            value: item[0] === 2 ? null : item[0],
+            label: item[0] === 2 ? null : item[1],
+        }))
+        .end(),
+};
 
-const structure : ParsingStructure<MyType> = {
-    test: new SimpleParseEntry({
-        $type: Type.BIT(1),
-        $offset: 0,
-    }),
-    hums: new ArrayParseEntry({
-        label: new SimpleParseEntry({
-            $offset: 0,
-            $type: Type.STRING(5, "ascii"),
-        }),
-        value: new SimpleParseEntry({
-            $offset: 5,
-            $type: Type.INT32_BE,
-            $transform: Pipeline((val) => val.toFixed(), (val) => parseInt(val))
-        }),
-    }, { $size: 3, $itemByteLength: 10, $offset: 1 })
-}
-
-const result = parse(structure, myBuffer);
-
-console.log(inspect(result, false, null, true))
+console.log(inspect(result, false, null, true));

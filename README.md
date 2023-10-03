@@ -1,54 +1,38 @@
-# smart-buffer-parser
+# easy-buffer
 
-Ever wanted to parse a buffer into a nicely structured javascript object and had _a lot_ of messy `buffer.read...()` calls? This ends now!
-
-The `smart-buffer-parser` package offers an intuitive (and typesafe) way to convert a buffer to any kind of data structure.
+Provides a powerful interface to read primitives, arrays and tuples from a buffer and transform them after that.
 
 # Examples
 
 Let's get started quickly and learn from simple examples!
 
-### Example 1: Simple nested structures
-
-Imagine your buffer is structured like this:
-
-![](./screenshots/1.jpg)
-
-Assume you want to convert this buffer into the following type: 
+Every example expects an easy buffer instance. You can create one like this:
 
 ```ts
-type MyType = {
-    label: string,  // 4 byte ascii string
-    data: {
-        id: number,     // 2 byte int
-        value: number   // 4 byte float
-    }
-}
+import { EasyBuffer, Type } from "easy-buffer";
+
+// the nodejs buffer you want to read from
+const buffer: Buffer = ...;
+
+// just pass the nodejs buffer to the easy buffer constructor
+const easy = new Easybuffer(buffer);
 ```
 
-You can do that by specifying a _parsing structure_ as a parameter of the parse method.
+### Example 1: Primitives
+
+To read a primitive `INT32_BE` which is located at byte `16` write:
 
 ```ts
-
-const result: MyType = parse({
-    label: new SimpleParseEntry({
-        $offset: 0, // the offset is always specified in bytes
-        $type: Type.STRING(4, "ascii")
-    }),
-    data: {
-        id: new SimpleParseEntry({
-            $offset: 4,
-            $type: Type.INT16_LE
-        }),
-        value: new SimpleParseEntry({
-            $offset: 12,
-            $type: Type.FLOAT_LE
-        }),
-    }
-}, buffer);
+const number = easy.read({ type: Type.INT32_BE, offset: 16 }).end();
 ```
 
-As you see, you simply create a `ParseEntry` whenever you need something from the buffer.
+To read a `ascii` string which is located at byte `20` and is `15` bytes long write:
+
+```ts
+const primitive = easy
+    .read({ type: Type.STRING(15, "ascii"), offset: 20 })
+    .end();
+```
 
 ### Example 2: Arrays
 
@@ -56,20 +40,10 @@ Imagine your buffer is structured like this:
 
 ![](./screenshots/2.jpg)
 
-Assume you want to convert this buffer into a simple array: 
+Assume you want to convert this buffer into a simple `number[]`:
 
 ```ts
-type MyType = number[];
-```
-
-Because our target type is not a nested structure, we directly pass a simple parse entry:
-
-```ts
-const result: MyType = parse(new SimpleParseEntry({
-    $offset: 0,
-    $type: Type.ARRAY(Type.INT32_LE),
-    $size: 4
-}), buffer);
+const array = easy.read({ type: Type.ARRAY(Type.INT32_LE, 4) }).end();
 ```
 
 To parse an array we simply utilized the `Type.ARRAY(...)` method and passed our item's type.
@@ -82,149 +56,79 @@ Imagine your buffer is structured like this:
 
 Again your buffer has an arrayish structure but there are some nasty gaps in there.
 
-I don't see any problem, just use the `$gap` option and specify the gap's size in bytes🙃.
+I don't see any problem, just specify the gap's size in bytes🙃.
+
 ```ts
-const result: MyType = parse(new SimpleParseEntry({
-    $offset: 0,
-    $type: Type.ARRAY(Type.INT32_LE),
-    $gap: 4,
-    $size: 4,
-}), buffer);
+const array = easy
+    .read({ type: Type.ARRAY(Type.INT32_LE, 4, 4), offset: 0 })
+    .end();
 ```
 
-### Example 4: Array structures (with gaps)
+_Tip: It is possible to nest multiple Type.ARRAY(type, size, gap) calls to read arrays of higher dimensions!_
 
-Imagine your buffer is structured like this:
+### Example 4: Tuples
 
-![](./screenshots/4.jpg)
-
-Assume you want to convert this buffer into the following type: 
+It is also possible to read tuples.
 
 ```ts
-type MyType = ({
-    id: number, // int32 LE
-    value: number, // float LE
-})[]; // <--- an array!
-```
-
-This is also easily possible! Just wrap your parsing structure (which would work for a single array item) in a `ArrayParseEntry` and specify the array's offset, size and item length (in bytes).
-
-
-```ts
-const result: MyType = parse(
-    new ArrayParseEntry(
-        {
-            id: new SimpleParseEntry({
-                $offset: 0, // relative to the offset specified in the array options
-                $type: Type.INT32_LE,
-            }),
-            value: new SimpleParseEntry({
-                $offset: 4,
-                $type: Type.FLOAT_LE,
-            }),
-        }, 
-        {
-            $offset: 0, // the offset of the whole arrayish structure
-            $itemByteLength: 8 + 4, // specify the length of a single item + the gap
-            $size: 4
-        }           
-), buffer);
+const tuple = easy
+    .read({
+        type: Type.TUPLE_3(
+            Type.INT32_LE,
+            Type.STRING(3, "ascii"),
+            Type.FLOAT_LE
+        ),
+        offset: 5,
+    })
+    .end(); // this returns a tuple of type [number, string, number]
 ```
 
 ### Example 5: Transforming your data after it got parsed
 
-It is also possible to transform your data after it got parsed to the specified `$type`.
+It is also possible to transform your data after it got parsed to the specified `type`.
 
-Imagine you have the following buffer (see example 1):
-
-![](./screenshots/1.jpg)
-
-Your target type is:
+To do so call `.transform(val => ...)` before calling `.end()`. You can chain multiple transform calls.
 
 ```ts
-type MyType = {
-    label: string,  // ascii string but capitalized
-    id: string,     // int16 but as string
-    float: number,  // float but multiplied with 2
-}
+const primitive = easy
+    .read({ type: Type.STRING(15, "ascii"), offset: 20 })
+    .transform((str) => str.toUpperCase()) // this makes the string uppercase
+    .end();
 ```
 
-You want to capitalize the ascii string, convert the int to a string and multiplicate the float with `2`.
+If you want to transform each item of an array individually you can call `.transformItem((val, index) => ...)`.
 
-Instead of using a `SimpleParseEntry` use a `TransformedParseEntry` and specify the `$transform` option.
-
-This option expects a function of type `(value: ParseType) => TargetType`. _ParseType_ is the type specified in `$type`, _TargetType_ is the type of the property in `MyType`. 
-
-This function gets executed after the buffer parsed the entry to the _ParseType_.
-
-
-You should end up with the following code:
 ```ts
-const result : MyType = parse({
-    label: new TransformedParseEntry({
-        $type: Type.STRING(4, "ascii"),
-        $offset: 0,
-        $transform: (val) => val.toUpperCase()
-    }),
-    id: new TransformedParseEntry({
-        $type: Type.INT16_LE,
-        $offset: 4,
-        $transform: (val) => val.toString()
-    }),
-    value: new TransformedParseEntry({
-        $type: Type.FLOAT_LE,
-        $offset: 12,
-        $transform: (val) => val * 2
-    }),
-}, buffer);
+const array = easy
+    .read({ type: Type.ARRAY(Type.INT32_LE), size: 4, gap: 4, offset: 0 })
+    .transformItem((val, index) => val.toFixed(2)) // converts each number to string
+    .end();
 ```
 
-If your `$type` is an array (e.g. `Type.ARRAY(Type.INT32_LE`)) and want to transform every entry seperatably, you can use the `$transformItem` option which also provides the item's index.
-
-
-### Example 6: Reusing parsed values
-
-Imagine you have the following buffer (see example 1):
-
-![](./screenshots/1.jpg)
-
-In our imaginary scenario the `int16` value stands for a current weather condition (`0 -> "sunny" | 1 -> "cloudy" | 2 -> "rainy" | 3 -> "snowy"`).
-
-Assume you want to include the conditions id (the number itself) **and**  the parsed value (the string representation) in your target type:
+If you want to transform your tuple (but still want it to be a tuple) call `.transformTuple(tuple => ...)`.
 
 ```ts
-type MyWeatherCondition = {
-    conditionId: number,
-    condition: string
-}
-```
-
-You don't need to parse the integer twice, just parse it once and create a `DependencyParseEntry`.
-
-
-```ts
-const result: MyWeatherCondition = parse({
-    conditionId: new SimpleParseEntry({
-        $offset: 4,
-        $type: Type.INT16_LE
-    }),
-    condition: new DependencyParseEntry({
-        $dependsOn: "conditionId",
-        $transform: (id) => {
-            switch(id){
-                case 0: return "sunny";
-                case 1: return "cloudy";
-                case 2: return "rainy";
-                case 3: return "snowy";
-                default: return "Unknown condition!";
-            }
-        }
+const tuple = easy
+    .read({
+        type: Type.TUPLE_3(
+            Type.INT32_LE,
+            Type.STRING(3, "ascii"),
+            Type.FLOAT_LE
+        ),
+        offset: 5,
     })
-});
+    .transformTuple((tuple) => [
+        tuple[0] * 2,
+        tuple[1].toUpperCase(),
+        tuple[2].toFixed(2),
+    ])
+    .end(); // this returns a tuple of type [number, string, string]
 ```
 
-# Tips
+### Example 6: Nulling values
 
-- if you have multiple transform functions that you want to execute one after another use `Pipeline(fn1, fn2, fn3, ...)` or `ArrayPipeline(fn1, fn2, fn3, ...)`
-- if you want to automatically null your property if it matches a specified value use the `$nullables: [val1, val2, ...]` option
-- if you want to automatically null your property if another property is null use the `$nullWith: "otherProperty"` option
+In some of my projects specific values of an integer have a special meaning, e.g. `0x12A3` or `0x32A4` meant `'no signal'`. In these cases I wanted to return `null` instead. That's why this library offers multiple functions to automatically null the parsed result if certain conditions are met.
+
+`.nullIfEquals(...nullables)` nulls result if it matches one of the passed nullable.
+`.nullIfItemEquals(...nullables)` does the same but for arrays.
+`.nullIfTupleItemEquals([...nullables, ...nullables, ...])` does the same but for tuples.
