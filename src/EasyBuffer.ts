@@ -459,9 +459,7 @@ export class TupleParseObject<Type> extends PrimitiveParseObject<
     ): TupleParseObject<InjectNullToTuple<Type>> {
         const result: (ElementType<Type> | null)[] = [];
         for (const item of this.value) {
-            result.push(
-                nullables.includes(this.value as any) ? null : (item as any)
-            );
+            result.push(nullables.includes(item as any) ? null : (item as any));
         }
         return new TupleParseObject(result as any, this.easyBuffer);
     }
