@@ -2,29 +2,28 @@ import Type from "../Type";
 import { inspect } from "util";
 import EasyBuffer from "../EasyBuffer";
 
-const myBuffer = Buffer.alloc(1000);
+const buffer = new EasyBuffer(Buffer.alloc(1000));
 
-let byteIndex = 0;
-for (let i = 0; i < 3; ++i) {
-    myBuffer.writeInt32BE(i, byteIndex);
-    byteIndex += 4;
-    myBuffer.write("hell" + i, byteIndex, "ascii");
-    byteIndex += 6;
-}
-
-const buffer = new EasyBuffer(myBuffer);
-
+buffer.write(
+    Type.ARRAY(Type.TUPLE_3(Type.INT32_BE, Type.STRING(5), Type.FLOAT_BE), 3),
+    [
+        [12, "hello", 23.3],
+        [23, "hello", 23.3],
+        [111, "hello", 23.3],
+    ] as [number, string, number][]
+);
 type MyType = {
-    hums: [number, number, number];
+    hums: [number, string, number][];
 };
 
 const result: MyType = {
     hums: buffer
-        .read({
-            type: Type.TUPLE_3(Type.INT32_BE, Type.STRING(5), Type.STRING(5)),
-            offset: 0,
-        })
-        .transformTupleItem((item, index) => 3)
+        .read(
+            Type.ARRAY(
+                Type.TUPLE_3(Type.INT32_BE, Type.STRING(5), Type.FLOAT_BE),
+                3
+            )
+        )
         .end(),
 };
 

@@ -1,7 +1,7 @@
 {
     "name": "@harrydehix/easy-buffer",
-    "version": "1.0.7",
-    "description": "Provides a powerful (and typesafe) way to read from buffers!",
+    "version": "1.1.0",
+    "description": "Provides a powerful (and typesafe) way to read (or write) from buffers!",
     "main": "dist/index.js",
     "scripts": {
         "watch": "npx tsc --watch",

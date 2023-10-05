@@ -366,25 +366,34 @@ export default class EasyBuffer {
         this.buffer = buffer;
     }
 
+    public write<ValueType, T extends TypeType>(
+        type: Type<ValueType, T>,
+        value: ValueType,
+        offset: number = 0
+    ) {
+        type.write(this.buffer, value, offset);
+    }
+
     public read<Target, T extends TypeType>(
-        options: ParseOptions<Target, T>
+        type: Type<Target, T>,
+        offset: number = 0
     ): ParseObject<Target, T> {
-        if (options.type.type === "array") {
-            const type = options.type as Type<Target, "array">;
+        if (type.type === "array") {
+            const arrayType = type as Type<Target, "array">;
             return new ArrayParseObject(
-                type.parse(this.buffer, options.offset) as any,
+                arrayType.read(this.buffer, offset) as any,
                 this
             ) as ParseObject<Target, T>;
-        } else if (options.type.type === "tuple") {
-            const type = options.type as Type<Target, "tuple">;
+        } else if (type.type === "tuple") {
+            const tupleType = type as Type<Target, "tuple">;
             return new TupleParseObject(
-                type.parse(this.buffer, options.offset) as any,
+                tupleType.read(this.buffer, offset) as any,
                 this
             ) as ParseObject<Target, T>;
         } else {
-            const type = options.type as Type<Target, "primitive">;
+            const primitiveType = type as Type<Target, "primitive">;
             return new PrimitiveParseObject(
-                type.parse(this.buffer, options.offset),
+                primitiveType.read(this.buffer, offset),
                 this
             ) as ParseObject<Target, T>;
         }
@@ -509,9 +518,4 @@ export class ArrayParseObject<ElementType> extends PrimitiveParseObject<
     protected clone() {
         return new ArrayParseObject<ElementType>(this.value, this.easyBuffer);
     }
-}
-
-export interface ParseOptions<Target, T extends TypeType> {
-    type: Type<Target, T>;
-    offset: number;
 }
