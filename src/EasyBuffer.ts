@@ -359,6 +359,36 @@ type ParseObject<Target, T> = T extends "primitive"
     ? TupleParseObject<InferTuple<Target>>
     : never;
 
+export class WriteAnchor {
+    public readonly buffer: Buffer;
+    public readonly offset: number;
+
+    constructor(buffer: Buffer, offset: number) {
+        this.buffer = buffer;
+        this.offset = offset;
+    }
+
+    public write<ValueType, T extends TypeType>(
+        type: Type<ValueType, T>,
+        value: ValueType
+    ) {
+        type.write(this.buffer, value, this.offset);
+        return new WriteAnchor(this.buffer, this.offset + type.byteLength);
+    }
+
+    public at(offset: number) {
+        return new WriteAnchor(this.buffer, offset);
+    }
+
+    public skip(gap: number) {
+        return new WriteAnchor(this.buffer, this.offset + gap);
+    }
+
+    public return(gap: number) {
+        return new WriteAnchor(this.buffer, this.offset - gap);
+    }
+}
+
 export default class EasyBuffer {
     public buffer: Buffer;
 
@@ -366,12 +396,8 @@ export default class EasyBuffer {
         this.buffer = buffer;
     }
 
-    public write<ValueType, T extends TypeType>(
-        type: Type<ValueType, T>,
-        value: ValueType,
-        offset: number = 0
-    ) {
-        type.write(this.buffer, value, offset);
+    public at(offset: number) {
+        return new WriteAnchor(this.buffer, offset);
     }
 
     public read<Target, T extends TypeType>(
