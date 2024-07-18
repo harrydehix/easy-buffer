@@ -1,8 +1,9 @@
 {
     "name": "@harrydehix/easy-buffer",
-    "version": "1.2.1",
+    "version": "1.3.0",
     "description": "Provides a powerful (and typesafe) way to read (or write) from buffers!",
     "main": "dist/index.js",
+    "type": "module",
     "scripts": {
         "watch": "npx tsc --watch",
         "build": "npx tsc",
@@ -22,7 +23,7 @@
     "devDependencies": {
         "@types/lodash.flow": "^3.5.7",
         "@types/node": "^20.8.2",
-        "typescript": "^5.2.2"
+        "typescript": "^5.5.3"
     },
     "dependencies": {
         "lodash.flow": "^3.5.0"
