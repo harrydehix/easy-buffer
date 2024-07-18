@@ -1,2 +1,2 @@
-export { default as EasyBuffer } from "./EasyBuffer";
-export { default as Type } from "./Type";
+export { default as EasyBuffer } from "./EasyBuffer.js";
+export { default as Type } from "./Type.js";

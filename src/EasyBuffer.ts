@@ -1,4 +1,4 @@
-import { Type, TypeType } from "./Type";
+import { Type, TypeType } from "./Type.js";
 
 type ElementType<T> = T extends (infer E)[] ? E : never;
 

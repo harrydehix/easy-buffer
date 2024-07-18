@@ -1,6 +1,6 @@
-import Type from "../Type";
+import Type from "../Type.js";
 import { inspect } from "util";
-import EasyBuffer from "../EasyBuffer";
+import EasyBuffer from "../EasyBuffer.js";
 
 const buffer = new EasyBuffer(Buffer.alloc(1000));
 
